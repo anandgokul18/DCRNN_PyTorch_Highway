@@ -1,6 +1,6 @@
 ---
 base_dir: data/model
-log_level: INFO
+log_level: DEBUG
 data:
   batch_size: 32
   dataset_dir: data/Highway
