@@ -122,8 +122,11 @@ class DCRNNModel(nn.Module, Seq2SeqAttrs):
                 _, encoder_hidden_state = self.encoder_model(inputs[t], encoder_hidden_state)
 
         if(torch.cuda.current_device()==1):
-            for t in range(self.encoder_model.seq_len//2,self.encoder_model.seq_len):
-                _, encoder_hidden_state = self.encoder_model(inputs[t], encoder_hidden_state)
+            try:
+                for t in range(self.encoder_model.seq_len//2,self.encoder_model.seq_len):
+                    _, encoder_hidden_state = self.encoder_model(inputs[t], encoder_hidden_state)
+            except:
+                import pdb;pdb.set_trace()
         
         return encoder_hidden_state
 
