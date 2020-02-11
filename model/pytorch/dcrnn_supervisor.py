@@ -185,8 +185,12 @@ class DCRNNSupervisor:
                 optimizer.zero_grad()
 
                 x, y = self._prepare_data(x, y)
-
-                output = self.dcrnn_model(x, y, batches_seen)
+                
+                #Parallelizing across multiple GPUs
+                #import pdb; pdb.set_trace()
+                output = torch.nn.DataParallel(self.dcrnn_model)
+                output = output(x,y,batches_seen).to(device)
+                #output=self.dcrnn_model(x, y, batches_seen)
 
                 if batches_seen == 0:
                     # this is a workaround to accommodate dynamically registered parameters in DCGRUCell

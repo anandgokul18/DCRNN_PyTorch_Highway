@@ -116,9 +116,15 @@ class DCRNNModel(nn.Module, Seq2SeqAttrs):
         :return: encoder_hidden_state: (num_layers, batch_size, self.hidden_state_size)
         """
         encoder_hidden_state = None
-        for t in range(self.encoder_model.seq_len):
-            _, encoder_hidden_state = self.encoder_model(inputs[t], encoder_hidden_state)
+        
+        if(torch.cuda.current_device()==0):
+            for t in range(self.encoder_model.seq_len//2):
+                _, encoder_hidden_state = self.encoder_model(inputs[t], encoder_hidden_state)
 
+        if(torch.cuda.current_device()==1):
+            for t in range(self.encoder_model.seq_len//2,self.encoder_model.seq_len):
+                _, encoder_hidden_state = self.encoder_model(inputs[t], encoder_hidden_state)
+        
         return encoder_hidden_state
 
     def decoder(self, encoder_hidden_state, labels=None, batches_seen=None):
@@ -137,7 +143,15 @@ class DCRNNModel(nn.Module, Seq2SeqAttrs):
 
         outputs = []
 
-        for t in range(self.decoder_model.horizon):
+        if(torch.cuda.current_device()==0):
+            rangevalues_start = 0
+            rangevalues_end = self.decoder_model.horizon//2
+
+        if(torch.cuda.current_device()==1):
+            rangevalues_start = self.decoder_model.horizon//2
+            rangevalues_end = self.decoder_model.horizon
+
+        for t in range(rangevalues_start, rangevalues_end):
             decoder_output, decoder_hidden_state = self.decoder_model(decoder_input,
                                                                       decoder_hidden_state)
             decoder_input = decoder_output
