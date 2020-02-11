@@ -133,7 +133,7 @@ def main(args):
 
 
 if __name__ == '__main__':
-    logger = utils.get_logger('data/model', 'Baseline')
+    logger = utils.get_logger('data/model/logs', 'Baseline')
     parser = argparse.ArgumentParser()
     parser.add_argument('--traffic_reading_filename', default="data/metr-la.h5", type=str,
                         help='Path to the traffic Dataframe.')

@@ -74,14 +74,14 @@ class DCRNNSupervisor:
                 structure, learning_rate, batch_size,
                 time.strftime('%m%d%H%M%S'))
             base_dir = kwargs.get('base_dir')
-            log_dir = os.path.join(base_dir, run_id)
+            log_dir = os.path.join(base_dir, 'logs_training', run_id)
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
         return log_dir
 
     def save_model(self, epoch):
-        if not os.path.exists('models/'):
-            os.makedirs('models/')
+        if not os.path.exists('savedModels/'):
+            os.makedirs('savedModels/')
 
         config = dict(self._kwargs)
         config['model_state_dict'] = self.dcrnn_model.state_dict()
@@ -92,8 +92,8 @@ class DCRNNSupervisor:
 
     def load_model(self):
         self._setup_graph()
-        assert os.path.exists('models/epo%d.tar' % self._epoch_num), 'Weights at epoch %d not found' % self._epoch_num
-        checkpoint = torch.load('models/epo%d.tar' % self._epoch_num, map_location='cpu')
+        assert os.path.exists('savedModels/epo%d.tar' % self._epoch_num), 'Weights at epoch %d not found' % self._epoch_num
+        checkpoint = torch.load('savedModels/epo%d.tar' % self._epoch_num, map_location='cpu')
         self.dcrnn_model.load_state_dict(checkpoint['model_state_dict'])
         self._logger.info("Loaded model at {}".format(self._epoch_num))
 
