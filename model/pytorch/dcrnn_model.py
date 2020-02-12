@@ -117,21 +117,11 @@ class DCRNNModel(nn.Module, Seq2SeqAttrs):
         """
         encoder_hidden_state = None
         
-        if(torch.cuda.current_device()==0):
-            assert(len(inputs)==6),"Size is not equal to 6 on Cuda:0"
-            for t in range(self.encoder_model.seq_len//2):
-                _, encoder_hidden_state = self.encoder_model(inputs[t], encoder_hidden_state)
+        currentdevice=torch.cuda.current_device()
+        assert(len(inputs)==self.encoder_model.seq_len//2),"Size is not equal to "+ self.encoder_model.seq_len//2 + " on Cuda:"+currentdevice
+        for t in range(self.encoder_model.seq_len//2):
+            _, encoder_hidden_state = self.encoder_model(inputs[t], encoder_hidden_state)
 
-        if(torch.cuda.current_device()==1):
-            assert(len(inputs)==6),"Size is not equal to 6 on Cuda:1"
-            try:
-                for t in range(self.encoder_model.seq_len//2,self.encoder_model.seq_len):
-                    _, encoder_hidden_state = self.encoder_model(inputs[t], encoder_hidden_state)
-            except IndexError as e:
-                self._logger.debug("Changing starting index from $VALUE//2 to 0")
-                for t in range(self.encoder_model.seq_len//2):
-                    _, encoder_hidden_state = self.encoder_model(inputs[t], encoder_hidden_state)
-        
         return encoder_hidden_state
 
     def decoder(self, encoder_hidden_state, labels=None, batches_seen=None):
