@@ -117,9 +117,9 @@ class DCRNNModel(nn.Module, Seq2SeqAttrs):
         """
         encoder_hidden_state = None
         
-        currentdevice=torch.cuda.current_device()
-        assert(len(inputs)==self.encoder_model.seq_len//2),"Size is not equal to "+ self.encoder_model.seq_len//2 + " on Cuda:"+currentdevice
-        for t in range(self.encoder_model.seq_len//2):
+        #currentdevice=torch.cuda.current_device()
+        #assert(len(inputs)==self.encoder_model.seq_len//2),"Size is not equal to "+ self.encoder_model.seq_len//2 + " on Cuda:"+currentdevice
+        for t in range(self.encoder_model.seq_len): #//2
             _, encoder_hidden_state = self.encoder_model(inputs[t], encoder_hidden_state)
 
         return encoder_hidden_state
@@ -140,13 +140,16 @@ class DCRNNModel(nn.Module, Seq2SeqAttrs):
 
         outputs = []
 
-        if(torch.cuda.current_device()==0):
-            rangevalues_start = 0
-            rangevalues_end = self.decoder_model.horizon//2
+        #if(torch.cuda.current_device()==0):
+        #    rangevalues_start = 0
+        #    rangevalues_end = self.decoder_model.horizon//2
 
-        if(torch.cuda.current_device()==1):
-            rangevalues_start = self.decoder_model.horizon//2
-            rangevalues_end = self.decoder_model.horizon
+        #if(torch.cuda.current_device()==1):
+        #    rangevalues_start = self.decoder_model.horizon//2
+        #    rangevalues_end = self.decoder_model.horizon
+
+        rangevalues_start = 0
+        rangevalues_end = self.decoder_model.horizon
 
         for t in range(rangevalues_start, rangevalues_end):
             decoder_output, decoder_hidden_state = self.decoder_model(decoder_input,
