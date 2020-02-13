@@ -24,7 +24,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config_filename', default=None, type=str,
+    parser.add_argument('--config_filename', default='data/model/dcrnn_highway.yaml', type=str,
                         help='Configuration filename for restoring the model.')
     parser.add_argument('--use_cpu_only', default=False, type=bool, help='Set to true to only use cpu.')
 
