@@ -2,10 +2,10 @@
 base_dir: data/model
 log_level: INFO #DEBUG
 data:
-  batch_size: 64
+  batch_size: 16
   dataset_dir: data/Highway
-  test_batch_size: 64
-  val_batch_size: 64
+  test_batch_size: 16
+  val_batch_size: 16
   graph_pkl_filename: data/sensor_graph_highway/dcrnn_highway_adj_mx.pkl
 
 model:

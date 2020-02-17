@@ -107,9 +107,9 @@ class DCRNNSupervisor:
                 output = self.dcrnn_model(x)
                 break
 
-    def train(self, **kwargs):
+    def train(self, args,**kwargs):
         kwargs.update(self._train_kwargs)
-        return self._train(**kwargs)
+        return self._train(args,**kwargs)
 
     def evaluate(self, dataset='val', batches_seen=0):
         """
@@ -152,7 +152,7 @@ class DCRNNSupervisor:
 
             return mean_loss, {'prediction': y_preds_scaled, 'truth': y_truths_scaled}
 
-    def _train(self, base_lr,
+    def _train(self, args, base_lr,
                steps, patience=50, epochs=100, lr_decay_ratio=0.1, log_every=1, save_model=1,
                test_every_n_epochs=10, epsilon=1e-8, **kwargs):
         # steps is used in learning rate - will see if need to use it?
