@@ -9,7 +9,7 @@ from lib.utils import load_graph_data
 #metis python package needs to have the actual C library installed as well
 #sudo apt-get install libmetis-dev  
 
-def partition_into_3subgraphs(graph_pkl_filename, required_graph_id):
+def partition_into_3subgraphs(graph_pkl_filename, required_graph_id=None):
 
 	#graph_pkl_filename = '/home/users/anandgok/dcrnn_highway_adj_mx.pkl'
 
@@ -112,12 +112,14 @@ def partition_into_3subgraphs(graph_pkl_filename, required_graph_id):
 	Returning the correct adjacency matrix based on the requested index
 	'''
 
-	if required_graph_id=='0':
-		return (section0_elements,adj_mx0)
+	if required_graph_id=='-1': #Used for getting the partions to split train-val-test internally
+		return (section0_elements,section1_elements,section2_elements)
+	elif required_graph_id=='0':
+		return adj_mx0
 	elif required_graph_id=='1':
-		return (section1_elements,adj_mx1)
+		return adj_mx1
 	elif required_graph_id=='2':
-		return (section2_elements,adj_mx2)
+		return adj_mx2
 	else:
 		raise ValueError('The required_graph_id should be a value from 0 to 2 only')
 

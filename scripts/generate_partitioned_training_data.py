@@ -20,6 +20,7 @@ import numpy as np
 import os
 import pandas as pd
 
+from model.pytorch.metis_graph_partitioning import partition_into_3subgraphs
 
 def generate_graph_seq2seq_io_data(
         df, x_offsets, y_offsets, add_time_in_day=True, add_day_in_week=False, scaler=None
@@ -66,6 +67,10 @@ def generate_graph_seq2seq_io_data(
 
 
 def generate_train_val_test(args):
+
+    #For getting the 3 partition nodes
+    list0,list1,list2 = partition_into_3subgraphs(args.pkl_filename, '-1')
+
     df = pd.read_hdf(args.traffic_df_filename)
     # 0 is the latest observed sample.
     x_offsets = np.sort(
@@ -130,6 +135,12 @@ if __name__ == "__main__":
         type=str,
         default=None,
         help="Raw traffic readings.",
+    )
+    parser.add_argument(
+        "--pkl_filename",
+        type=str,
+        default=None,
+        help="This pickle file is used to find the partions",
     )
     args = parser.parse_args()
     main(args)
