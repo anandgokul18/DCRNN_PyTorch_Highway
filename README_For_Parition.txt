@@ -4,7 +4,7 @@ README
 If using Split graphs, please change the below fields:
 
 0. Before everything, split the dataset into 3 partitions:
-	python -m scripts.generate_partitioned_training_data --output_dir=data/Highway_rough --traffic_df_filename=data/dcrnn_highway_6m_rough.h5 --pkl_filename=data/sensor_graph_highway/dcrnn_highway_adj_mx.pkl
+	python -m scripts.generate_partitioned_training_data --output_dir=data/Highway --traffic_df_filename=data/dcrnn_highway_6m.h5 --pkl_filename=data/sensor_graph_highway/dcrnn_highway_adj_mx.pkl
 
 1. On 
 	model/pytorch/dcrnn_supervisor.py 

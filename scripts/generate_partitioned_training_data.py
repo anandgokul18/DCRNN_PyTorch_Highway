@@ -65,13 +65,8 @@ def generate_graph_seq2seq_io_data(
     y = np.stack(y, axis=0)
     return x, y
 
+def generate_train_val_test(df, partition_id, args):
 
-def generate_train_val_test(args):
-
-    #For getting the 3 partition nodes
-    list0,list1,list2 = partition_into_3subgraphs(args.pkl_filename, '-1')
-
-    df = pd.read_hdf(args.traffic_df_filename)
     # 0 is the latest observed sample.
     x_offsets = np.sort(
         # np.concatenate(([-week_size + 1, -day_size + 1], np.arange(-11, 1, 1)))
@@ -89,6 +84,7 @@ def generate_train_val_test(args):
         add_day_in_week=False,
     )
 
+    print("Currently processing Partition #: "+str(partition_id))
     print("x shape: ", x.shape, ", y shape: ", y.shape)
     # Write the data into npz file.
     # num_test = 6831, using the last 6831 examples as testing.
@@ -97,6 +93,7 @@ def generate_train_val_test(args):
     num_test = round(num_samples * 0.2)
     num_train = round(num_samples * 0.7)
     num_val = num_samples - num_test - num_train
+
 
     # train
     x_train, y_train = x[:num_train], y[:num_train]
@@ -112,17 +109,54 @@ def generate_train_val_test(args):
         _x, _y = locals()["x_" + cat], locals()["y_" + cat]
         print(cat, "x: ", _x.shape, "y:", _y.shape)
         np.savez_compressed(
-            os.path.join(args.output_dir, "%s.npz" % cat),
+            os.path.join(args.output_dir+str(partition_id), "%s.npz" % cat),
             x=_x,
             y=_y,
             x_offsets=x_offsets.reshape(list(x_offsets.shape) + [1]),
             y_offsets=y_offsets.reshape(list(y_offsets.shape) + [1]),
         )
 
+def generate_partitioned_data(args):
+
+    #For getting the 3 partition nodes
+    list0,list1,list2 = partition_into_3subgraphs(args.pkl_filename, '-1')
+
+    df = pd.read_hdf(args.traffic_df_filename)
+
+    #Renaming the df's column names
+    numberofsensors=[]
+    for i in range(df.shape[1]):
+        numberofsensors.append(i)
+
+    df.columns=numberofsensors
+
+    #Making 3 deep copies of the original dataframe. One for each partition
+    print("Generating partitions")
+    df0 = df.copy()
+    df1 = df.copy()
+    df2 = df.copy()
+
+    #Deleting the columns from df0, df1 and df2 based on the partition lists
+    print("Putting each node in respective partition")
+    for n in list0:
+        del df1[n]
+        del df2[n]
+    for n in list1:
+        del df0[n]
+        del df2[n]
+    for n in list2:
+        del df0[n]
+        del df1[n]
+
+
+    generate_train_val_test(df0,'0',args)
+    generate_train_val_test(df1,'1',args)
+    generate_train_val_test(df2,'2',args)
+
 
 def main(args):
     print("Generating training data")
-    generate_train_val_test(args)
+    generate_partitioned_data(args)
 
 
 if __name__ == "__main__":
