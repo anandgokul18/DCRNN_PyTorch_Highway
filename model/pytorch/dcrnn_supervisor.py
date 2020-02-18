@@ -14,8 +14,11 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 device0 = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 device1 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
+#For ease of changing GPU reference
+device=device
+
 class DCRNNSupervisor:
-    def __init__(self, adj_mx, **kwargs):
+    def __init__(self, adj_mx, subgraph_id, **kwargs):
         self._kwargs = kwargs
         self._data_kwargs = kwargs.get('data')
         self._model_kwargs = kwargs.get('model')
@@ -24,8 +27,8 @@ class DCRNNSupervisor:
         self.max_grad_norm = self._train_kwargs.get('max_grad_norm', 1.)
 
         # logging.
-        self._log_dir = self._get_log_dir(kwargs)
-        self._writer = SummaryWriter('runs/' + self._log_dir)
+        self._log_dir = self._get_log_dir(subgraph_id, kwargs)
+        self._writer = SummaryWriter('runs'+str(subgraph_id)+'/' + self._log_dir)
 
         log_level = self._kwargs.get('log_level', 'INFO')
         self._logger = utils.get_logger(self._log_dir, __name__, 'info.log', level=log_level)
@@ -44,15 +47,16 @@ class DCRNNSupervisor:
 
         # setup model
         dcrnn_model = DCRNNModel(adj_mx, self._logger, **self._model_kwargs)
-        self.dcrnn_model = dcrnn_model.cuda() if torch.cuda.is_available() else dcrnn_model
+        #self.dcrnn_model = dcrnn_model.cuda() if torch.cuda.is_available() else dcrnn_model
+        self.dcrnn_model = dcrnn_model.cuda(device=device) if torch.cuda.is_available() else dcrnn_model
         self._logger.info("Model created")
 
         self._epoch_num = self._train_kwargs.get('epoch', 0)
         if self._epoch_num > 0:
-            self.load_model()
+            self.load_model(subgraph_id)
 
     @staticmethod
-    def _get_log_dir(kwargs):
+    def _get_log_dir(subgraph_id, kwargs):
         log_dir = kwargs['train'].get('log_dir')
         if log_dir is None:
             batch_size = kwargs['data'].get('batch_size')
@@ -74,26 +78,28 @@ class DCRNNSupervisor:
                 structure, learning_rate, batch_size,
                 time.strftime('%m%d%H%M%S'))
             base_dir = kwargs.get('base_dir')
-            log_dir = os.path.join(base_dir, 'logs_training', run_id)
+            log_dir = os.path.join(base_dir, 'logs_training'+subgraph_id, run_id)
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
         return log_dir
 
-    def save_model(self, epoch):
-        if not os.path.exists('savedModels/'):
-            os.makedirs('savedModels/')
+    def save_model(self, subgraph_id, epoch):
+        target_location = 'savedModels'+str(subgraph_id)+'/'
+        if not os.path.exists(target_location):
+            os.makedirs(target_location)
 
         config = dict(self._kwargs)
         config['model_state_dict'] = self.dcrnn_model.state_dict()
         config['epoch'] = epoch
-        torch.save(config, 'models/epo%d.tar' % epoch)
+        torch.save(config, target_location+'epo%d.tar' % epoch)
         self._logger.info("Saved model at {}".format(epoch))
-        return 'models/epo%d.tar' % epoch
+        return target_location+'epo%d.tar' % epoch
 
-    def load_model(self):
+    def load_model(self, subgraph_id):
         self._setup_graph()
-        assert os.path.exists('savedModels/epo%d.tar' % self._epoch_num), 'Weights at epoch %d not found' % self._epoch_num
-        checkpoint = torch.load('savedModels/epo%d.tar' % self._epoch_num, map_location='cpu')
+        target_location = 'savedModels'+str(subgraph_id)+'/'
+        assert os.path.exists(target_location+'epo%d.tar' % self._epoch_num), 'Weights at epoch %d not found' % self._epoch_num
+        checkpoint = torch.load(target_location+'epo%d.tar' % self._epoch_num, map_location='cpu')
         self.dcrnn_model.load_state_dict(checkpoint['model_state_dict'])
         self._logger.info("Loaded model at {}".format(self._epoch_num))
 
@@ -108,9 +114,9 @@ class DCRNNSupervisor:
                 output = self.dcrnn_model(x)
                 break
 
-    def train(self, **kwargs):
+    def train(self, subgraph_id, **kwargs):
         kwargs.update(self._train_kwargs)
-        return self._train(**kwargs)
+        return self._train(subgraph_id, **kwargs)
 
     def evaluate(self, dataset='val', batches_seen=0):
         """
@@ -153,7 +159,7 @@ class DCRNNSupervisor:
 
             return mean_loss, {'prediction': y_preds_scaled, 'truth': y_truths_scaled}
 
-    def _train(self, base_lr,
+    def _train(self, subgraph_id, base_lr,
                steps, patience=50, epochs=100, lr_decay_ratio=0.1, log_every=1, save_model=1,
                test_every_n_epochs=10, epsilon=1e-8, **kwargs):
         # steps is used in learning rate - will see if need to use it?
@@ -239,7 +245,7 @@ class DCRNNSupervisor:
             if val_loss < min_val_loss:
                 wait = 0
                 if save_model:
-                    model_file_name = self.save_model(epoch_num)
+                    model_file_name = self.save_model(subgraph_id, epoch_num)
                     self._logger.info(
                         'Val loss decrease from {:.4f} to {:.4f}, '
                         'saving to {}'.format(min_val_loss, val_loss, model_file_name))
@@ -248,6 +254,13 @@ class DCRNNSupervisor:
             elif val_loss >= min_val_loss:
                 wait += 1
                 if wait == patience:
+                    self._logger.info('Early Stopping now. Doing final evaluation on test dataset...')
+                    test_loss, _ = self.evaluate(dataset='test', batches_seen=batches_seen)
+                    message = 'Epoch [{}/{}] ({}) train_mae: {:.4f}, test_mae: {:.4f},  lr: {:.6f}, ' \
+                                '{:.1f}s'.format(epoch_num, epochs, batches_seen,
+                                                np.mean(losses), test_loss, lr_scheduler.get_lr()[0],
+                                                (end_time - start_time))
+                    self._logger.info(message)                   
                     self._logger.warning('Early stopping at epoch: %d' % epoch_num)
                     break
 

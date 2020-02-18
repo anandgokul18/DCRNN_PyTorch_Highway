@@ -4,6 +4,11 @@ import torch
 from lib import utils
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device0 = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device1 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+
+#For ease of changing GPU reference
+device=device
 
 class LayerParams:
     def __init__(self, rnn_network: torch.nn.Module, layer_type: str):

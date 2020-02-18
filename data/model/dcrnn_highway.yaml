@@ -1,12 +1,15 @@
 ---
 base_dir: data/model
 log_level: INFO #DEBUG
+predictions_dir: data/results
 data:
-  batch_size: 16
-  dataset_dir: data/Highway
-  test_batch_size: 16
-  val_batch_size: 16
+  batch_size: 64
+  dataset_dir: data/Highway0 #data/Highway
+  test_batch_size: 64
+  val_batch_size: 64
   graph_pkl_filename: data/sensor_graph_highway/dcrnn_highway_adj_mx.pkl
+  split_into_subgraphs: true
+  subgraph_id: 0
 
 model:
   cl_decay_steps: 2000
@@ -15,7 +18,7 @@ model:
   input_dim: 2
   l1_decay: 0
   max_diffusion_step: 2
-  num_nodes: 923 #207
+  num_nodes: 923 #923 #SizeOfSubGraphs: [298, 316, 309]
   num_rnn_layers: 2
   output_dim: 1
   rnn_units: 64
