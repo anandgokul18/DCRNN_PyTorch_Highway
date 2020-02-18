@@ -116,7 +116,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--traffic_df_filename",
         type=str,
-        default="data/dcrnn_highway_6m.h5",
+        default=None,
         help="Raw traffic readings.",
     )
     args = parser.parse_args()

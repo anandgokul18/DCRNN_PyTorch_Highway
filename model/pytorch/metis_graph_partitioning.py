@@ -1,10 +1,13 @@
 import yaml
 import networkx as nx
-import metis #Install both apt-get of C package and the python package
+import metis
 import numpy as np
 #import pydot
 
 from lib.utils import load_graph_data
+   
+#metis python package needs to have the actual C library installed as well
+#sudo apt-get install libmetis-dev  
 
 def partition_into_3subgraphs(graph_pkl_filename, required_graph_id):
 
@@ -110,11 +113,11 @@ def partition_into_3subgraphs(graph_pkl_filename, required_graph_id):
 	'''
 
 	if required_graph_id=='0':
-		return adj_mx0
+		return (section0_elements,adj_mx0)
 	elif required_graph_id=='1':
-		return adj_mx1
+		return (section1_elements,adj_mx1)
 	elif required_graph_id=='2':
-		return adj_mx2
+		return (section2_elements,adj_mx2)
 	else:
 		raise ValueError('The required_graph_id should be a value from 0 to 2 only')
 
