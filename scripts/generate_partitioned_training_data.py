@@ -108,8 +108,11 @@ def generate_train_val_test(df, partition_id, args):
     for cat in ["train", "val", "test"]:
         _x, _y = locals()["x_" + cat], locals()["y_" + cat]
         print(cat, "x: ", _x.shape, "y:", _y.shape)
+        target_location = args.output_dir+str(partition_id)
+        if not os.path.exists(target_location):
+            os.makedirs(target_location)
         np.savez_compressed(
-            os.path.join(args.output_dir+str(partition_id), "%s.npz" % cat),
+            os.path.join(target_location, "%s.npz" % cat),
             x=_x,
             y=_y,
             x_offsets=x_offsets.reshape(list(x_offsets.shape) + [1]),
@@ -152,6 +155,8 @@ def generate_partitioned_data(args):
     generate_train_val_test(df0,'0',args)
     generate_train_val_test(df1,'1',args)
     generate_train_val_test(df2,'2',args)
+
+    print('Success...Exiting...')
 
 
 def main(args):
