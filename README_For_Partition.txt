@@ -9,7 +9,7 @@ If using Split graphs, please change the below fields:
 1. On 
 	model/pytorch/dcrnn_supervisor.py 
 	model/pytorch/dcrnn_model.py 
-	model/pytorch/and dcrnn_cell.py
+	model/pytorch/dcrnn_cell.py
 change the 'device' to desired Cuda device
 
 2. On 
@@ -25,6 +25,8 @@ change the below parameters to respective values:
 	epochs: total number of epochs
 	epoch: to load a previous model from the respective epoch. If 0, start from beginning
 
+To train the model:
+	python dcrnn_train_pytorch.py --config_filename=data/model/dcrnn_highway.yaml
 
 
 The final predictions are stored for all the partitions in:
