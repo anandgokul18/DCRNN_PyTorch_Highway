@@ -9,7 +9,7 @@ device0 = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 device1 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
 #For ease of changing GPU reference
-device=device
+device=device0
 
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)

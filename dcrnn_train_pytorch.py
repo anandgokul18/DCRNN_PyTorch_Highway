@@ -27,7 +27,7 @@ def main(args):
 
         supervisor = DCRNNSupervisor(adj_mx=adj_mx, subgraph_id=subgraph_id, **supervisor_config)
 
-        supervisor.train(subgraph_id)
+        supervisor.train(subgraph_identifier=subgraph_id)
 
         #Evaluating the model finally and storing the results
         mean_score, outputs = supervisor.evaluate('test')

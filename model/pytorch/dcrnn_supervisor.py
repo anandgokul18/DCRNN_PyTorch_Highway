@@ -15,7 +15,7 @@ device0 = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 device1 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
 #For ease of changing GPU reference
-device=device
+device=device0
 
 class DCRNNSupervisor:
     def __init__(self, adj_mx, subgraph_id, **kwargs):
@@ -114,9 +114,9 @@ class DCRNNSupervisor:
                 output = self.dcrnn_model(x)
                 break
 
-    def train(self, subgraph_id, **kwargs):
+    def train(self, subgraph_identifier, **kwargs):
         kwargs.update(self._train_kwargs)
-        return self._train(subgraph_id, **kwargs)
+        return self._train(subgraph_id=subgraph_identifier, **kwargs)
 
     def evaluate(self, dataset='val', batches_seen=0):
         """
