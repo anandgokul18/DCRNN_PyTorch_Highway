@@ -3,7 +3,7 @@ README
 
 If using Split graphs, please change the below fields:
 
-0. Before everything, split the dataset into 3 partitions:
+0. Before everything, split the dataset into 3 partitions (needed only once):
 	python -m scripts.generate_partitioned_training_data --output_dir=data/Highway --traffic_df_filename=data/dcrnn_highway_6m.h5 --pkl_filename=data/sensor_graph_highway/dcrnn_highway_adj_mx.pkl
 
 1. On 
@@ -29,3 +29,6 @@ change the below parameters to respective values:
 
 The final predictions are stored for all the partitions in:
 data/results/highway_predictions<0/1/2>.npz
+
+
+3. TO-DO: Combine all three predictions file back into their original order
