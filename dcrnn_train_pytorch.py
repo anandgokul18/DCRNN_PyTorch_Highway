@@ -18,9 +18,9 @@ def main(args):
 
         split_into_subgraphs = bool(supervisor_config['data'].get('split_into_subgraphs'))
         if split_into_subgraphs:
-            subgraph_id = supervisor_config['data'].get('subgraph_id')
+            subgraph_id = str(supervisor_config['data'].get('subgraph_id'))
             print('Splitting into Sub-graphs: True')
-            print('Current Sub-graph ID: '+ str(subgraph_id))
+            print('Current Sub-graph ID: '+ subgraph_id)
             adj_mx = partition_into_3subgraphs(graph_pkl_filename, subgraph_id)
         else:
             subgraph_id = ''
