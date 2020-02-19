@@ -131,7 +131,9 @@ def generate_partitioned_data(args):
     for i in range(df.shape[1]):
         numberofsensors.append(i)
 
-    df.columns=numberofsensors
+    originalcolumnheaders = list(df.columns.values)
+
+    df.columns = numberofsensors
 
     #Making 3 deep copies of the original dataframe. One for each partition
     print("Generating partitions")
@@ -156,6 +158,12 @@ def generate_partitioned_data(args):
     generate_train_val_test(df1,'1',args)
     generate_train_val_test(df2,'2',args)
 
+    #Saving the 4 lists as np.save(filename.npy,myList) files in predictions_dir
+    np.save(originalSensorIDs.npy,originalcolumnheaders)
+    np.save(sensorsInPartition0.npy,list0)
+    np.save(sensorsInPartition1.npy,list1)
+    np.save(sensorsInPartition2.npy,list2)
+
     print('Success...Exiting...')
 
 
@@ -167,7 +175,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--output_dir", type=str, default="data/", help="Output directory."
+        "--output_dir", type=str, default=None, help="Output directory."
     )
     parser.add_argument(
         "--traffic_df_filename",
@@ -180,6 +188,12 @@ if __name__ == "__main__":
         type=str,
         default=None,
         help="This pickle file is used to find the partions",
+    )
+    parser.add_argument(
+        "--predictions_dir",
+        type=str,
+        default=None,
+        help="A new file will be created in this directory with the original sensor_ids and sensor_ids in each parition",
     )
     args = parser.parse_args()
     main(args)
