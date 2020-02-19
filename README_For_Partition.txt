@@ -26,7 +26,7 @@ change the below parameters to respective values:
 	epoch: to load a previous model from the respective epoch. If 0, start from beginning
 
 To train the model:
-	python dcrnn_train_pytorch.py --config_filename=data/model/dcrnn_highway.yaml
+	python dcrnn_train_pytorch.py --config_filename=data/model/dcrnn_highway<0/1/2>.yaml
 
 
 The final predictions are stored for all the partitions in:
