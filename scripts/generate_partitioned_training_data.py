@@ -159,10 +159,11 @@ def generate_partitioned_data(args):
     generate_train_val_test(df2,'2',args)
 
     #Saving the 4 lists as np.save(filename.npy,myList) files in predictions_dir
-    np.save(originalSensorIDs.npy,originalcolumnheaders)
-    np.save(sensorsInPartition0.npy,list0)
-    np.save(sensorsInPartition1.npy,list1)
-    np.save(sensorsInPartition2.npy,list2)
+    print('Saving the sensor_ids to '+args.predictions_dir)
+    np.save(args.predictions_dir+"/originalSensorIDs.npy",originalcolumnheaders)
+    np.save(args.predictions_dir+"/sensorsInPartition0.npy",list0)
+    np.save(args.predictions_dir+"/sensorsInPartition1.npy",list1)
+    np.save(args.predictions_dir+"/sensorsInPartition2.npy",list2)
 
     print('Success...Exiting...')
 
