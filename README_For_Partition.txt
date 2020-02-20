@@ -9,6 +9,8 @@ If using Split graphs, please change the below fields:
 
 	Note: The predictions_dir should preferably be the same as the "predictions_dir" in the configuration yaml file. This file will contain the original sensor ids with actual numbers and the zero-indexed arrays of sensor IDs in each of the partitions
 
+	Also, create that directory given by predictions_dir in the exact location. Else, it will throw an error at the end after entire training has been completed!
+
 1. On 
 	model/pytorch/dcrnn_supervisor.py 
 	model/pytorch/dcrnn_model.py 
