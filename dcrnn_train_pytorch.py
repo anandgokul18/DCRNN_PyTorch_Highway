@@ -22,7 +22,7 @@ def main(args):
             subgraph_id = str(supervisor_config['data'].get('subgraph_id'))
             print('Splitting into Sub-graphs: True')
             print('Current Sub-graph ID: '+ subgraph_id)
-            adj_mx = partition_into_3subgraphs(graph_pkl_filename, subgraph_id)
+            adj_mx = partition_into_n_subgraphs(graph_pkl_filename, subgraph_id, 3)
         else:
             subgraph_id = ''
 
