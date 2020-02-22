@@ -7,7 +7,7 @@ import yaml
 import numpy as np
 
 from lib.utils import load_graph_data
-from model.pytorch.dcrnn_supervisor import DCRNNSupervisor
+import model.pytorch.dcrnn_supervisor as dcrnn_supervisor
 from model.pytorch.metis_graph_partitioning import partition_into_n_subgraphs
 
 def main(args):
@@ -39,7 +39,7 @@ def main(args):
         else:
             subgraph_id = ''
 
-        supervisor = DCRNNSupervisor(adj_mx=adj_mx, current_cuda_id=args.current_cuda_id, subgraph_id=subgraph_id, **supervisor_config)
+        supervisor = dcrnn_supervisor.DCRNNSupervisor(adj_mx=adj_mx, current_cuda_id=args.current_cuda_id, subgraph_id=subgraph_id, **supervisor_config)
 
         supervisor.train(subgraph_identifier=subgraph_id)
 
