@@ -20,7 +20,7 @@ import numpy as np
 import os
 import pandas as pd
 
-from model.pytorch.metis_graph_partitioning import partition_into_3subgraphs
+from model.pytorch.metis_graph_partitioning import partition_into_n_subgraphs
 
 def generate_graph_seq2seq_io_data(
         df, x_offsets, y_offsets, add_time_in_day=True, add_day_in_week=False, scaler=None
