@@ -27,12 +27,12 @@ def main(args):
             adj_mx = partition_into_n_subgraphs(graph_pkl_filename, subgraph_id, int(supervisor_config['data'].get('number_of_subgraphs')))
 
             #Choosing the correct dataset directory for current subgraph
-            #supervisor_config['data'].set('dataset_dir') = supervisor_config['data'].get('dataset_dir')+subgraph_id
+            supervisor_config['data']['dataset_dir'] = supervisor_config['data'].get('dataset_dir')+subgraph_id
             print("Debug Statement...Current dataset_dir is: "+supervisor_config['data'].get('dataset_dir'))
 
             #Choosing the correct number of nodes for current subgraph
             listofnodesizes = (supervisor_config['model'].get('num_nodes')).split(',')
-            #supervisor_config['model'].set('num_nodes') = int(listofnodesizes[int(subgraph_id)])
+            supervisor_config['model']['num_nodes'] = int(listofnodesizes[int(subgraph_id)])
             print("Debug Statement...Current num_nodes is: "+str(supervisor_config['model'].get('num_nodes')))
 
 
