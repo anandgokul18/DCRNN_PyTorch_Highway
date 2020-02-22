@@ -11,7 +11,6 @@ import model.pytorch.dcrnn_supervisor as dcrnn_supervisor
 from model.pytorch.metis_graph_partitioning import partition_into_n_subgraphs
 
 def main(args):
-    import pdb; pdb.set_trace()
     with open(args.config_filename) as f:
         supervisor_config = yaml.load(f)
 
@@ -28,18 +27,17 @@ def main(args):
 
             #Choosing the correct dataset directory for current subgraph
             supervisor_config['data']['dataset_dir'] = supervisor_config['data'].get('dataset_dir')+subgraph_id
-            print("Debug Statement...Current dataset_dir is: "+supervisor_config['data'].get('dataset_dir'))
 
             #Choosing the correct number of nodes for current subgraph
             listofnodesizes = (supervisor_config['model'].get('num_nodes')).split(',')
             supervisor_config['model']['num_nodes'] = int(listofnodesizes[int(subgraph_id)])
-            print("Debug Statement...Current num_nodes is: "+str(supervisor_config['model'].get('num_nodes')))
 
 
         else:
             subgraph_id = ''
 
-        supervisor = dcrnn_supervisor.DCRNNSupervisor(adj_mx=adj_mx, current_cuda_id=args.current_cuda_id, subgraph_id=subgraph_id, **supervisor_config)
+        current_cuda_id = int(args.current_cuda_id)
+        supervisor = dcrnn_supervisor.DCRNNSupervisor(adj_mx=adj_mx, current_cuda_id=current_cuda_id, subgraph_id=subgraph_id, **supervisor_config)
 
         supervisor.train(subgraph_identifier=subgraph_id)
 
