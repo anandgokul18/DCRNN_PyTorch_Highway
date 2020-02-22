@@ -155,8 +155,6 @@ def partition_into_n_subgraphs(graph_pkl_filename, required_graph_id=None, numbe
 		listofpartitions[parts[i]].append(i)
 
 
-	import pdb; pdb.set_trace()
-
 	'''Useful Commands'''
 
 	#G.number_of_nodes()
