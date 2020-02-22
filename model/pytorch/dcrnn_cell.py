@@ -8,7 +8,7 @@ device0 = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 device1 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
 class LayerParams:
-    def __init__(self, current_cuda_id, rnn_network: torch.nn.Module, layer_type: str):
+    def __init__(self, rnn_network: torch.nn.Module, layer_type: str, current_cuda_id: int):
 
         #For ease of choosing training GPU
         if current_cuda_id==0:
@@ -82,8 +82,8 @@ class DCGRUCell(torch.nn.Module):
         for support in supports:
             self._supports.append(self._build_sparse_matrix(support))
 
-        self._fc_params = LayerParams(self, current_cuda_id=current_cuda_id, 'fc')
-        self._gconv_params = LayerParams(self, current_cuda_id=current_cuda_id, 'gconv')
+        self._fc_params = LayerParams(self, 'fc', current_cuda_id=current_cuda_id)
+        self._gconv_params = LayerParams(self, 'gconv', current_cuda_id=current_cuda_id)
 
     @staticmethod
     def _build_sparse_matrix(L):
