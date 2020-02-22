@@ -80,13 +80,13 @@ class DCGRUCell(torch.nn.Module):
         else:
             supports.append(utils.calculate_scaled_laplacian(adj_mx))
         for support in supports:
-            self._supports.append(self._build_sparse_matrix(support))
+            self._supports.append(self._build_sparse_matrix(support,device))
 
         self._fc_params = LayerParams(self, 'fc', current_cuda_id=current_cuda_id)
         self._gconv_params = LayerParams(self, 'gconv', current_cuda_id=current_cuda_id)
 
     @staticmethod
-    def _build_sparse_matrix(L):
+    def _build_sparse_matrix(L, device):
         L = L.tocoo()
         indices = np.column_stack((L.row, L.col))
         # this is to ensure row-major ordering to equal torch.sparse.sparse_reorder(L)
