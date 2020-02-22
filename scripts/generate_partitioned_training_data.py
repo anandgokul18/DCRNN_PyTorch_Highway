@@ -164,7 +164,7 @@ def generate_partitioned_data(args):
     '''
     for i in range(0,args.number_of_paritions):
         currentdf=listofdf[i]
-        for j in range(0,listofpartitions):
+        for j in range(0,len(listofpartitions)):
             if i!=j:
                 for n in listofpartitions[j]:
                     del currentdf[n]
