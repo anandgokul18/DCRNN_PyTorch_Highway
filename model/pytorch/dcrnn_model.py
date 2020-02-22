@@ -128,8 +128,8 @@ class DCRNNModel(nn.Module, Seq2SeqAttrs):
             device=device1
 
         Seq2SeqAttrs.__init__(self, adj_mx, current_cuda_id, **model_kwargs)
-        self.encoder_model = EncoderModel(adj_mx, **model_kwargs)
-        self.decoder_model = DecoderModel(adj_mx, **model_kwargs)
+        self.encoder_model = EncoderModel(adj_mx, current_cuda_id, **model_kwargs)
+        self.decoder_model = DecoderModel(adj_mx, current_cuda_id, **model_kwargs)
         self.cl_decay_steps = int(model_kwargs.get('cl_decay_steps', 1000))
         self.use_curriculum_learning = bool(model_kwargs.get('use_curriculum_learning', False))
         self._logger = logger
