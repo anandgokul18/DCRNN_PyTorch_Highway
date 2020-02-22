@@ -15,6 +15,7 @@ device = None
 device0 = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 device1 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
+device= device1
 
 class DCRNNSupervisor:
     def __init__(self, adj_mx, current_cuda_id, subgraph_id, **kwargs):
