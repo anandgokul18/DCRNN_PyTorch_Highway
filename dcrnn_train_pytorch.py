@@ -61,7 +61,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config_filename', default=None, type=str,
                         help='Configuration filename for restoring the model.')
-    parser.add_argument('--current_cuda_id', default=1, type=int, help='Enter the CUDA GPU ID based on nvidia-smi in which you want to train this partition')
+    parser.add_argument('--current_cuda_id', default=0, type=int, help='Enter the CUDA GPU ID based on nvidia-smi in which you want to train this partition')
     parser.add_argument('--use_cpu_only', default=False, type=bool, help='Set to true to only use cpu.')
     parser.add_argument('--subgraph_id', default=None, type=int, help='Choose the current subgraph')
     args = parser.parse_args()
