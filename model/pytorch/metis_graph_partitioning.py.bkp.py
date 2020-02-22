@@ -123,8 +123,3 @@ def partition_into_3subgraphs(graph_pkl_filename, required_graph_id=None):
 	else:
 		raise ValueError('The required_graph_id should be a value from 0 to 2 only')
 
-def partition_into_n_subgraphs(graph_pkl_filename, required_graph_id=None, number_of_paritions=None):
-
-	if number_of_paritions==3:
-		list0,list1,list2 = partition_into_3subgraphs(graph_pkl_filename, '-1')
-		return [list0,list1,list2]

@@ -122,8 +122,7 @@ def generate_train_val_test(df, partition_id, args):
 def generate_partitioned_data(args):
 
     #For getting the 3 partition nodes
-    #list0,list1,list2 = partition_into_3subgraphs(args.pkl_filename, '-1')
-    listofpartitions = partition_into_n_subgraphs(args.pkl_filename, '-1', args.number_of_paritions)
+    list0,list1,list2 = partition_into_3subgraphs(args.pkl_filename, '-1')
 
     df = pd.read_hdf(args.traffic_df_filename)
 
@@ -136,22 +135,14 @@ def generate_partitioned_data(args):
 
     df.columns = numberofsensors
 
-    print("Generating partitions")
-    '''
     #Making 3 deep copies of the original dataframe. One for each partition
+    print("Generating partitions")
     df0 = df.copy()
     df1 = df.copy()
     df2 = df.copy()
-    '''
 
-    #Making n deep copies of the orignal dataframe. One for each partition
-    listofdf=[]
-    for i in range(0,args.number_of_paritions):
-        listofdf.append(df.copy())
-
-    print("Putting each node in respective partition")
-    '''
     #Deleting the columns from df0, df1 and df2 based on the partition lists
+    print("Putting each node in respective partition")
     for n in list0:
         del df1[n]
         del df2[n]
@@ -161,35 +152,18 @@ def generate_partitioned_data(args):
     for n in list2:
         del df0[n]
         del df1[n]
-    '''
-    for i in range(0,args.number_of_paritions):
-        currentdf=listofdf[i]
-        for j in range(0,listofpartitions):
-            if i!=j:
-                for n in listofpartitions[j]:
-                    del currentdf[n]
 
-    import pdb; pdb.set_trace()
 
-    '''
     generate_train_val_test(df0,'0',args)
     generate_train_val_test(df1,'1',args)
     generate_train_val_test(df2,'2',args)
-    '''
-    for i in range(0,args.number_of_paritions):
-        generate_train_val_test(listofdf[i],str(i),args)
-
 
     #Saving the 4 lists as np.save(filename.npy,myList) files in predictions_dir
     print('Saving the sensor_ids to '+args.predictions_dir)
     np.save(args.predictions_dir+"/originalSensorIDs.npy",originalcolumnheaders)
-    '''
     np.save(args.predictions_dir+"/sensorsInPartition0.npy",list0)
     np.save(args.predictions_dir+"/sensorsInPartition1.npy",list1)
     np.save(args.predictions_dir+"/sensorsInPartition2.npy",list2)
-    '''
-    for i in range(0,args.number_of_paritions):
-        np.save(args.predictions_dir+"/sensorsInPartition"+str(i)+".npy",listofpartitions[i])
 
     print('Success...Exiting...')
 
@@ -221,12 +195,6 @@ if __name__ == "__main__":
         type=str,
         default=None,
         help="A new file will be created in this directory with the original sensor_ids and sensor_ids in each parition",
-    )
-    parser.add_argument(
-        "--number_of_paritions",
-        type=int,
-        default=None,
-        help="Enter the number of partitions required. Must match every where else",
     )
     args = parser.parse_args()
     main(args)
