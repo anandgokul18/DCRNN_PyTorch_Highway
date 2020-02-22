@@ -123,7 +123,7 @@ def generate_partitioned_data(args):
 
     #For getting the 3 partition nodes
     #list0,list1,list2 = partition_into_3subgraphs(args.pkl_filename, '-1')
-    listofpartitions = partition_into_n_subgraphs(args.pkl_filename, '-1', args.number_of_paritions)
+    listofpartitions = partition_into_n_subgraphs(args.pkl_filename, '-1', args.number_of_partitions)
 
     df = pd.read_hdf(args.traffic_df_filename)
 
@@ -221,7 +221,7 @@ if __name__ == "__main__":
         help="A new file will be created in this directory with the original sensor_ids and sensor_ids in each parition",
     )
     parser.add_argument(
-        "--number_of_paritions",
+        "--number_of_partitions",
         type=int,
         default=None,
         help="Enter the number of partitions required. Must match every where else",

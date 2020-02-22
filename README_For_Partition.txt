@@ -8,12 +8,10 @@ If using Split graphs, please follow the below instructions:
 	mkdir data/results
 
 1. Before everything, split the dataset into 3 partitions (needed only once):
-	python -m scripts.generate_partitioned_training_data --output_dir=data/Highway --predictions_dir=data/results --traffic_df_filename=data/dcrnn_highway_6m.h5 --pkl_filename=data/sensor_graph_highway/dcrnn_highway_adj_mx.pkl --number_of_paritions=3
+	python -m scripts.generate_partitioned_training_data --output_dir=data/Highway --predictions_dir=data/results --traffic_df_filename=data/dcrnn_highway_6m.h5 --pkl_filename=data/sensor_graph_highway/dcrnn_highway_adj_mx.pkl --number_of_partitions=3
 
 
 	Note: The predictions_dir MUST be the same as the "predictions_dir" in the configuration yaml file. This file will contain the original sensor ids with actual numbers and the zero-indexed arrays of sensor IDs in each of the partitions
-
-	Also, create that directory given by predictions_dir in the exact location. Else, it will throw an error at the end after entire training has been completed!
 
 2. On 
 	model/pytorch/dcrnn_supervisor.py 

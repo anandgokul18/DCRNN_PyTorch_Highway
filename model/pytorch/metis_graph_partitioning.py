@@ -123,8 +123,88 @@ def partition_into_3subgraphs(graph_pkl_filename, required_graph_id=None):
 	else:
 		raise ValueError('The required_graph_id should be a value from 0 to 2 only')
 
-def partition_into_n_subgraphs(graph_pkl_filename, required_graph_id=None, number_of_paritions=None):
+def partition_into_n_subgraphs(graph_pkl_filename, required_graph_id=None, number_of_partitions=None):
 
-	if number_of_paritions==3:
-		list0,list1,list2 = partition_into_3subgraphs(graph_pkl_filename, '-1')
-		return [list0,list1,list2]
+	#if number_of_paritions==3:
+	#	list0,list1,list2 = partition_into_3subgraphs(graph_pkl_filename, '-1')
+	#	return [list0,list1,list2]
+
+	#graph_pkl_filename = '/home/users/anandgok/dcrnn_highway_adj_mx.pkl'
+
+	sensor_ids, sensor_id_to_ind, adj_mx = load_graph_data(graph_pkl_filename)
+
+	G = nx.from_numpy_matrix(adj_mx, parallel_edges=False, create_using=nx.DiGraph)
+
+	(edgecuts, parts) = metis.part_graph(G, number_of_paritions)
+
+
+	'''
+	Based on the partitions created by metis, creating 3 lists with node-ids of each parition
+	'''
+
+	indexes = [0]*number_of_paritions
+	listofpartitions = [[]]*number_of_paritions
+
+	for i in range(0,len(parts)):
+		indexes[parts[i]]+=1
+
+		for j in range(0,number_of_partitions):
+			if(parts[i])==j:
+				listofpartitions[j].append(i)
+
+
+	import pdb; pdb.set_trace()
+
+	'''Useful Commands'''
+
+	#G.number_of_nodes()
+	#G.number_of_edges()
+
+	#list(G.edges)
+	#list(G.nodes)
+
+
+	if required_graph_id=='-1': #Used for getting the partions to split train-val-test internally
+		return listofpartitions
+
+	#Checking if the input is valid
+	if int(required_graph_id) not in range(0,number_of_partitions):
+		raise ValueError('The required_graph_id should be a value from 0 to '+str(number_of_partitions-1)+' only')
+
+	'''
+	Creating Subgraphs based on the metis partitions
+	'''
+
+	#CREATING SUB-GRAPHS MANUALLY
+
+	#Single sub-graph whichever is required
+	SG = G.__class__()
+	SG.add_nodes_from((n, G.nodes[n]) for n in listofpartitions[int(required_graph_id)])
+
+	SG.add_weighted_edges_from((n, nbr, G[n][nbr]['weight'])
+	    for n, nbrs in G.adj.items() if n in listofpartitions[int(required_graph_id)]
+	    for nbr, keydict in nbrs.items() if nbr in listofpartitions[int(required_graph_id)]
+	    for key, d in keydict.items())	
+
+	'''
+	Plotting
+	'''
+	#nx.nx_pydot.write_dot(adj_mx, 'original.dot')
+
+	'''
+	Getting the nx graph in numpy format (.ie. the same as adj_mx) 
+
+	Using Pandas here inititailly due to 2 reasons:
+	1. Pandas provides easier way to verify since the headers .ie. row and col id are maintained in nx. So, can be compared against values from original adj_mx
+	2. Numpy function does not work correctly for creating adjacency matrix in nx
+
+	'''
+
+	current_adj_mx = nx.to_pandas_adjacency(SG)  
+	current_adj_mx = current_adj_mx. to_numpy() 
+
+	'''
+	Returning the correct adjacency matrix based on the requested index
+	'''
+
+	return current_adj_mx
