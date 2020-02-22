@@ -106,7 +106,7 @@ class DecoderModel(nn.Module, Seq2SeqAttrs):
                  (lower indices mean lower layers)
         """
         hidden_states = []
-        output = inputs
+        output = inputs.to(device)
         for layer_num, dcgru_layer in enumerate(self.dcgru_layers):
             next_hidden_state = dcgru_layer(output, hidden_state[layer_num])
             hidden_states.append(next_hidden_state)
