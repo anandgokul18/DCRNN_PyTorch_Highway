@@ -1,3 +1,5 @@
 import torch
 
-device = None
+def init():
+    global device
+    device = None

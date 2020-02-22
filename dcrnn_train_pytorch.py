@@ -12,7 +12,7 @@ from model.pytorch.metis_graph_partitioning import partition_into_n_subgraphs
 
 #For setting the current cuda device
 import torch
-import lib.currentCuda
+import lib.currentCuda as currentCuda
 
 def main(args):
     with open(args.config_filename) as f:
@@ -40,7 +40,8 @@ def main(args):
         else:
             subgraph_id = ''
 
-        lib.currentCuda.device = torch.device("cuda:"+str(args.current_cuda_id) if torch.cuda.is_available() else "cpu")
+        currentCuda.init()
+        currentCuda.device = torch.device("cuda:"+str(args.current_cuda_id) if torch.cuda.is_available() else "cpu")
 
         supervisor = dcrnn_supervisor.DCRNNSupervisor(adj_mx=adj_mx, subgraph_id=subgraph_id, **supervisor_config)
 
