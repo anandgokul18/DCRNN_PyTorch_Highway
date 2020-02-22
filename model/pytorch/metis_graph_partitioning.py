@@ -144,8 +144,8 @@ def partition_into_n_subgraphs(graph_pkl_filename, required_graph_id=None, numbe
 	Based on the partitions created by metis, creating 3 lists with node-ids of each parition
 	'''
 
-	indexes = [0]*number_of_paritions
-	listofpartitions = [[]]*number_of_paritions
+	indexes = [0]*number_of_partitions
+	listofpartitions = [[]]*number_of_partitions
 
 	for i in range(0,len(parts)):
 		indexes[parts[i]]+=1
