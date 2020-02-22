@@ -147,6 +147,8 @@ def partition_into_n_subgraphs(graph_pkl_filename, required_graph_id=None, numbe
 	'''
 
 	indexes = [0]*number_of_partitions
+	#indexes=[298, 316, 309]
+	
 	listofpartitions = [[] for _ in range(number_of_partitions)]
 
 	for i in range(0,len(parts)):
@@ -165,7 +167,7 @@ def partition_into_n_subgraphs(graph_pkl_filename, required_graph_id=None, numbe
 
 
 	if required_graph_id=='-1': #Used for getting the partions to split train-val-test internally
-		return listofpartitions
+		return (indexes,listofpartitions)
 
 	#Checking if the input is valid
 	if int(required_graph_id) not in range(0,number_of_partitions):

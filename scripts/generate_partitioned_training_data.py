@@ -123,7 +123,7 @@ def generate_partitioned_data(args):
 
     #For getting the 3 partition nodes
     #list0,list1,list2 = partition_into_3subgraphs(args.pkl_filename, '-1')
-    listofpartitions = partition_into_n_subgraphs(args.pkl_filename, '-1', args.number_of_partitions)
+    indexes, listofpartitions = partition_into_n_subgraphs(args.pkl_filename, '-1', args.number_of_partitions)
 
     df = pd.read_hdf(args.traffic_df_filename)
 
@@ -190,6 +190,8 @@ def generate_partitioned_data(args):
         np.save(args.predictions_dir+"/sensorsInPartition"+str(i)+".npy",listofpartitions[i])
 
     print('Success...Exiting...')
+
+    print("Copy the list to the config .yaml file under model--> num_nodes: '"+ str(indexes)+"'")
 
 
 def main(args):
