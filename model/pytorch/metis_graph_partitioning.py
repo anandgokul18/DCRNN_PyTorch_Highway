@@ -139,6 +139,8 @@ def partition_into_n_subgraphs(graph_pkl_filename, required_graph_id=None, numbe
 
 	(edgecuts, parts) = metis.part_graph(G, number_of_partitions)
 
+	#Note 'parts' variable essentially is a list which tells which partition each element belongs to .ie. parts=[0,1,0,0,0,1,2,2,23,0,3,....]
+
 
 	'''
 	Based on the partitions created by metis, creating 3 lists with node-ids of each parition
@@ -150,9 +152,7 @@ def partition_into_n_subgraphs(graph_pkl_filename, required_graph_id=None, numbe
 	for i in range(0,len(parts)):
 		indexes[parts[i]]+=1
 
-		for j in range(0,number_of_partitions):
-			if(parts[i])==j:
-				listofpartitions[j].append(i)
+		listofpartitions[(parts[i])].append(i)
 
 
 	import pdb; pdb.set_trace()
