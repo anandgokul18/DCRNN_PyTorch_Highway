@@ -1,3 +1,5 @@
 import torch
 
-global dcrnn_cudadevice
+def init():
+    global dcrnn_cudadevice
+    dcrnn_cudadevice = None
