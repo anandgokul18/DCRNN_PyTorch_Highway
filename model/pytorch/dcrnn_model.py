@@ -89,7 +89,7 @@ class DecoderModel(nn.Module, Seq2SeqAttrs):
         Seq2SeqAttrs.__init__(self, adj_mx, current_cuda_id, **model_kwargs)
         self.output_dim = int(model_kwargs.get('output_dim', 1))
         self.horizon = int(model_kwargs.get('horizon', 1))  # for the decoder
-        self.projection_layer = nn.Linear(self.rnn_units, self.output_dim)
+        self.projection_layer = nn.Linear((self.rnn_units).to(device), (self.output_dim).to(device))
         self.dcgru_layers = nn.ModuleList(
             [DCGRUCell(self.rnn_units, adj_mx, current_cuda_id, self.max_diffusion_step, self.num_nodes,
                        filter_type=self.filter_type) for _ in range(self.num_rnn_layers)])
@@ -112,7 +112,7 @@ class DecoderModel(nn.Module, Seq2SeqAttrs):
             hidden_states.append(next_hidden_state)
             output = next_hidden_state
 
-        projected = self.projection_layer(output.view(-1, self.rnn_units).to(device))
+        projected = self.projection_layer(output.view(-1, self.rnn_units))
         output = projected.view(-1, self.num_nodes * self.output_dim)
 
         return output, torch.stack(hidden_states)
