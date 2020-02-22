@@ -112,7 +112,7 @@ class DecoderModel(nn.Module, Seq2SeqAttrs):
             hidden_states.append(next_hidden_state)
             output = next_hidden_state
 
-        projected = self.projection_layer(output.view(-1, self.rnn_units))
+        projected = self.projection_layer(output.view(-1, self.rnn_units)).to(device)
         output = projected.view(-1, self.num_nodes * self.output_dim)
 
         return output, torch.stack(hidden_states)
