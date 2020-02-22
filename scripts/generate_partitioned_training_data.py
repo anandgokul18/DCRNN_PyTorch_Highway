@@ -169,8 +169,6 @@ def generate_partitioned_data(args):
                 for n in listofpartitions[j]:
                     del currentdf[n]
 
-    import pdb; pdb.set_trace()
-
     '''
     generate_train_val_test(df0,'0',args)
     generate_train_val_test(df1,'1',args)
