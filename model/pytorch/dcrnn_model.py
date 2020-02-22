@@ -5,11 +5,11 @@ import torch.nn as nn
 from model.pytorch.dcrnn_cell import DCGRUCell
 
 #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = None
-device0 = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-device1 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+#device0 = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+#device1 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
-device= device1
+#Copying the current Cuda device
+from lib.currentCuda import device
 
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
