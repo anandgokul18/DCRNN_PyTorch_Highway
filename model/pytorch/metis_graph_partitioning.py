@@ -9,6 +9,7 @@ from lib.utils import load_graph_data
 #metis python package needs to have the actual C library installed as well
 #sudo apt-get install libmetis-dev  
 
+"""
 def partition_into_3subgraphs(graph_pkl_filename, required_graph_id=None):
 
 	#graph_pkl_filename = '/home/users/anandgok/dcrnn_highway_adj_mx.pkl'
@@ -122,6 +123,7 @@ def partition_into_3subgraphs(graph_pkl_filename, required_graph_id=None):
 		return adj_mx2
 	else:
 		raise ValueError('The required_graph_id should be a value from 0 to 2 only')
+"""
 
 def partition_into_n_subgraphs(graph_pkl_filename, required_graph_id=None, number_of_partitions=None):
 
@@ -135,7 +137,7 @@ def partition_into_n_subgraphs(graph_pkl_filename, required_graph_id=None, numbe
 
 	G = nx.from_numpy_matrix(adj_mx, parallel_edges=False, create_using=nx.DiGraph)
 
-	(edgecuts, parts) = metis.part_graph(G, number_of_paritions)
+	(edgecuts, parts) = metis.part_graph(G, number_of_partitions)
 
 
 	'''
