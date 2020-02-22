@@ -146,7 +146,7 @@ def generate_partitioned_data(args):
 
     #Making n deep copies of the orignal dataframe. One for each partition
     listofdf=[]
-    for i in range(0,args.number_of_paritions):
+    for i in range(0,args.number_of_partitions):
         listofdf.append(df.copy())
 
     print("Putting each node in respective partition")
@@ -162,7 +162,7 @@ def generate_partitioned_data(args):
         del df0[n]
         del df1[n]
     '''
-    for i in range(0,args.number_of_paritions):
+    for i in range(0,args.number_of_partitions):
         currentdf=listofdf[i]
         for j in range(0,len(listofpartitions)):
             if i!=j:
@@ -174,7 +174,7 @@ def generate_partitioned_data(args):
     generate_train_val_test(df1,'1',args)
     generate_train_val_test(df2,'2',args)
     '''
-    for i in range(0,args.number_of_paritions):
+    for i in range(0,args.number_of_partitions):
         generate_train_val_test(listofdf[i],str(i),args)
 
 
@@ -186,7 +186,7 @@ def generate_partitioned_data(args):
     np.save(args.predictions_dir+"/sensorsInPartition1.npy",list1)
     np.save(args.predictions_dir+"/sensorsInPartition2.npy",list2)
     '''
-    for i in range(0,args.number_of_paritions):
+    for i in range(0,args.number_of_partitions):
         np.save(args.predictions_dir+"/sensorsInPartition"+str(i)+".npy",listofpartitions[i])
 
     print('Success...Exiting...')
