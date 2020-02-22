@@ -11,6 +11,7 @@ from model.pytorch.dcrnn_model import DCRNNModel
 from model.pytorch.loss import masked_mae_loss
 
 #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = None
 device0 = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 device1 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
@@ -272,7 +273,7 @@ class DCRNNSupervisor:
     def _prepare_data(self, x, y):
         x, y = self._get_x_y(x, y)
         x, y = self._get_x_y_in_correct_dims(x, y)
-        return x.to(self.device), y.to(self.device)
+        return x.to(device), y.to(device)
 
     def _get_x_y(self, x, y):
         """
