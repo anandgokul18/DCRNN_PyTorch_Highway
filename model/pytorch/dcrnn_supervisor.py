@@ -272,7 +272,7 @@ class DCRNNSupervisor:
     def _prepare_data(self, x, y):
         x, y = self._get_x_y(x, y)
         x, y = self._get_x_y_in_correct_dims(x, y)
-        return x.to(device), y.to(device)
+        return x.to(self.device), y.to(self.device)
 
     def _get_x_y(self, x, y):
         """
