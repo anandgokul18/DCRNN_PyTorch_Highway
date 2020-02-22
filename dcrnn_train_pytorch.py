@@ -8,7 +8,7 @@ import numpy as np
 
 from lib.utils import load_graph_data
 from model.pytorch.dcrnn_supervisor import DCRNNSupervisor
-from model.pytorch.metis_graph_partitioning import partition_into_3subgraphs
+from model.pytorch.metis_graph_partitioning import partition_into_n_subgraphs
 
 def main(args):
     with open(args.config_filename) as f:
