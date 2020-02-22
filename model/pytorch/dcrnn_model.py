@@ -9,7 +9,7 @@ from model.pytorch.dcrnn_cell import DCGRUCell
 #device1 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
 #Copying the current Cuda device
-from lib.currentCuda import device
+import lib.currentCuda.device as device
 
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
