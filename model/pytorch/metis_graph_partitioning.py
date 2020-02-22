@@ -147,12 +147,12 @@ def partition_into_n_subgraphs(graph_pkl_filename, required_graph_id=None, numbe
 	'''
 
 	indexes = [0]*number_of_partitions
-	listofpartitions = [[]]*number_of_partitions
+	listofpartitions = [[] for _ in range(number_of_partitions)]
 
 	for i in range(0,len(parts)):
 		indexes[parts[i]]+=1
 
-		listofpartitions[(parts[i])].append(i)
+		listofpartitions[parts[i]].append(i)
 
 
 	import pdb; pdb.set_trace()
