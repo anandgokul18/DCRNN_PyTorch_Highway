@@ -8,7 +8,8 @@ from lib import utils
 #device1 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
 #Copying the current Cuda device
-from lib.currentCuda import device
+from lib.currentCuda import dcrnn_cudadevice
+device = dcrnn_cudadevice
 
 class LayerParams:
     def __init__(self, rnn_network: torch.nn.Module, layer_type: str):

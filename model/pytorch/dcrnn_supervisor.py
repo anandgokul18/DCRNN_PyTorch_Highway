@@ -15,7 +15,8 @@ from model.pytorch.loss import masked_mae_loss
 #device1 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
 #Copying the current Cuda device
-from lib.currentCuda import device
+from lib.currentCuda import dcrnn_cudadevice
+device = dcrnn_cudadevice
 
 class DCRNNSupervisor:
     def __init__(self, adj_mx, subgraph_id, **kwargs):

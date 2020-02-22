@@ -1,3 +1,3 @@
 import torch
 
-global device
+global dcrnn_cudadevice
