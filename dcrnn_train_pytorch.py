@@ -19,14 +19,26 @@ def main(args):
 
         split_into_subgraphs = bool(supervisor_config['data'].get('split_into_subgraphs'))
         if split_into_subgraphs:
-            subgraph_id = str(supervisor_config['data'].get('subgraph_id'))
+            assert(args.subgraph_id!=None, 'Enter a subgraph_id as python argument')
+            subgraph_id = str(args.subgraph_id)
             print('Splitting into Sub-graphs: True')
             print('Current Sub-graph ID: '+ subgraph_id)
-            adj_mx = partition_into_n_subgraphs(graph_pkl_filename, subgraph_id, 3)
+            adj_mx = partition_into_n_subgraphs(graph_pkl_filename, subgraph_id, int(supervisor_config['data'].get('number_of_subgraphs')))
+
+            #Choosing the correct dataset directory for current subgraph
+            supervisor_config['data'].get('dataset_dir') = supervisor_config['data'].get('dataset_dir')+subgraph_id
+            print("Debug Statement...Current dataset_dir is: "+supervisor_config['data'].get('dataset_dir'))
+
+            #Choosing the correct number of nodes for current subgraph
+            listofnodesizes = (supervisor_config['model'].get('num_nodes')).split(',')
+            supervisor_config['model'].get('num_nodes') = int(listofnodesizes[int(subgraph_id)])
+            print("Debug Statement...Current num_nodes is: "+str(supervisor_config['model'].get('num_nodes')))
+
+
         else:
             subgraph_id = ''
 
-        supervisor = DCRNNSupervisor(adj_mx=adj_mx, subgraph_id=subgraph_id, **supervisor_config)
+        supervisor = DCRNNSupervisor(adj_mx=adj_mx, current_cuda_id=args.current_cuda_id, subgraph_id=subgraph_id, **supervisor_config)
 
         supervisor.train(subgraph_identifier=subgraph_id)
 
@@ -42,6 +54,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config_filename', default=None, type=str,
                         help='Configuration filename for restoring the model.')
+    parser.add_argument('--current_cuda_id', default=None, type=int, help='Enter the CUDA GPU ID based on nvidia-smi in which you want to train this partition')
     parser.add_argument('--use_cpu_only', default=False, type=bool, help='Set to true to only use cpu.')
+    parser.add_argument('--subgraph_id', default=None, type=int, help='Choose the current subgraph')
     args = parser.parse_args()
     main(args)

@@ -8,15 +8,20 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 device0 = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 device1 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
-#For ease of changing GPU reference
-device=device0
 
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
 class Seq2SeqAttrs:
-    def __init__(self, adj_mx, **model_kwargs):
+    def __init__(self, adj_mx, current_cuda_id, **model_kwargs):
+
+        #For ease of choosing training GPU
+        if current_cuda_id==0:
+            device=device0
+        elif current_cuda_id==1:
+            device=device1
+
         self.adj_mx = adj_mx
         self.max_diffusion_step = int(model_kwargs.get('max_diffusion_step', 2))
         self.cl_decay_steps = int(model_kwargs.get('cl_decay_steps', 1000))
@@ -28,13 +33,20 @@ class Seq2SeqAttrs:
 
 
 class EncoderModel(nn.Module, Seq2SeqAttrs):
-    def __init__(self, adj_mx, **model_kwargs):
+    def __init__(self, adj_mx, current_cuda_id, **model_kwargs):
+
+        #For ease of choosing training GPU
+        if current_cuda_id==0:
+            device=device0
+        elif current_cuda_id==1:
+            device=device1
+
         nn.Module.__init__(self)
-        Seq2SeqAttrs.__init__(self, adj_mx, **model_kwargs)
+        Seq2SeqAttrs.__init__(self, adj_mx, current_cuda_id, **model_kwargs)
         self.input_dim = int(model_kwargs.get('input_dim', 1))
         self.seq_len = int(model_kwargs.get('seq_len'))  # for the encoder
         self.dcgru_layers = nn.ModuleList(
-            [DCGRUCell(self.rnn_units, adj_mx, self.max_diffusion_step, self.num_nodes,
+            [DCGRUCell(self.rnn_units, adj_mx, current_cuda_id, self.max_diffusion_step, self.num_nodes,
                        filter_type=self.filter_type) for _ in range(self.num_rnn_layers)])
 
     def forward(self, inputs, hidden_state=None):
@@ -63,10 +75,17 @@ class EncoderModel(nn.Module, Seq2SeqAttrs):
 
 
 class DecoderModel(nn.Module, Seq2SeqAttrs):
-    def __init__(self, adj_mx, **model_kwargs):
+    def __init__(self, adj_mx, current_cuda_id, **model_kwargs):
+
+        #For ease of choosing training GPU
+        if current_cuda_id==0:
+            device=device0
+        elif current_cuda_id==1:
+            device=device1
+
         # super().__init__(is_training, adj_mx, **model_kwargs)
         nn.Module.__init__(self)
-        Seq2SeqAttrs.__init__(self, adj_mx, **model_kwargs)
+        Seq2SeqAttrs.__init__(self, adj_mx, current_cuda_id, **model_kwargs)
         self.output_dim = int(model_kwargs.get('output_dim', 1))
         self.horizon = int(model_kwargs.get('horizon', 1))  # for the decoder
         self.projection_layer = nn.Linear(self.rnn_units, self.output_dim)
@@ -99,9 +118,16 @@ class DecoderModel(nn.Module, Seq2SeqAttrs):
 
 
 class DCRNNModel(nn.Module, Seq2SeqAttrs):
-    def __init__(self, adj_mx, logger, **model_kwargs):
+    def __init__(self, adj_mx, current_cuda_id, logger, **model_kwargs):
         super().__init__()
-        Seq2SeqAttrs.__init__(self, adj_mx, **model_kwargs)
+
+        #For ease of choosing training GPU
+        if current_cuda_id==0:
+            device=device0
+        elif current_cuda_id==1:
+            device=device1
+
+        Seq2SeqAttrs.__init__(self, adj_mx, current_cuda_id, **model_kwargs)
         self.encoder_model = EncoderModel(adj_mx, **model_kwargs)
         self.decoder_model = DecoderModel(adj_mx, **model_kwargs)
         self.cl_decay_steps = int(model_kwargs.get('cl_decay_steps', 1000))

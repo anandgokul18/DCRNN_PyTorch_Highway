@@ -7,11 +7,15 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 device0 = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 device1 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
-#For ease of changing GPU reference
-device=device0
-
 class LayerParams:
-    def __init__(self, rnn_network: torch.nn.Module, layer_type: str):
+    def __init__(self, current_cuda_id, rnn_network: torch.nn.Module, layer_type: str):
+
+        #For ease of choosing training GPU
+        if current_cuda_id==0:
+            device=device0
+        elif current_cuda_id==1:
+            device=device1
+            
         self._rnn_network = rnn_network
         self._params_dict = {}
         self._biases_dict = {}
@@ -38,7 +42,7 @@ class LayerParams:
 
 
 class DCGRUCell(torch.nn.Module):
-    def __init__(self, num_units, adj_mx, max_diffusion_step, num_nodes, nonlinearity='tanh',
+    def __init__(self, num_units, adj_mx, current_cuda_id, max_diffusion_step, num_nodes, nonlinearity='tanh',
                  filter_type="laplacian", use_gc_for_ru=True):
         """
 
@@ -50,6 +54,12 @@ class DCGRUCell(torch.nn.Module):
         :param filter_type: "laplacian", "random_walk", "dual_random_walk".
         :param use_gc_for_ru: whether to use Graph convolution to calculate the reset and update gates.
         """
+
+        #For ease of choosing training GPU
+        if current_cuda_id==0:
+            device=device0
+        elif current_cuda_id==1:
+            device=device1
 
         super().__init__()
         self._activation = torch.tanh if nonlinearity == 'tanh' else torch.relu
@@ -72,8 +82,8 @@ class DCGRUCell(torch.nn.Module):
         for support in supports:
             self._supports.append(self._build_sparse_matrix(support))
 
-        self._fc_params = LayerParams(self, 'fc')
-        self._gconv_params = LayerParams(self, 'gconv')
+        self._fc_params = LayerParams(self, current_cuda_id=current_cuda_id, 'fc')
+        self._gconv_params = LayerParams(self, current_cuda_id=current_cuda_id, 'gconv')
 
     @staticmethod
     def _build_sparse_matrix(L):

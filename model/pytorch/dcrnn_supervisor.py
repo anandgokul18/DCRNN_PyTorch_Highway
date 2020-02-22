@@ -14,11 +14,16 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 device0 = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 device1 = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
-#For ease of changing GPU reference
-device=device0
 
 class DCRNNSupervisor:
-    def __init__(self, adj_mx, subgraph_id, **kwargs):
+    def __init__(self, adj_mx, current_cuda_id, subgraph_id, **kwargs):
+
+        #For ease of choosing training GPU
+        if current_cuda_id==0:
+            device=device0
+        elif current_cuda_id==1:
+            device=device1
+
         self._kwargs = kwargs
         self._data_kwargs = kwargs.get('data')
         self._model_kwargs = kwargs.get('model')
@@ -46,7 +51,7 @@ class DCRNNSupervisor:
         self.horizon = int(self._model_kwargs.get('horizon', 1))  # for the decoder
 
         # setup model
-        dcrnn_model = DCRNNModel(adj_mx, self._logger, **self._model_kwargs)
+        dcrnn_model = DCRNNModel(adj_mx, current_cuda_id, self._logger, **self._model_kwargs)
         #self.dcrnn_model = dcrnn_model.cuda() if torch.cuda.is_available() else dcrnn_model
         self.dcrnn_model = dcrnn_model.cuda(device=device) if torch.cuda.is_available() else dcrnn_model
         self._logger.info("Model created")
