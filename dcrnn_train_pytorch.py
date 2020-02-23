@@ -51,7 +51,7 @@ def main(args):
 
         #Evaluating the model finally and storing the results
         mean_score, outputs = supervisor.evaluate('test')
-        output_filename = supervisor_config.get('predictions_dir')+'/'+'highway_predictions'+subgraph_id+'.npz'
+        output_filename = supervisor_config.get('predictions_dir')+'/'+'final_predictions'+subgraph_id+'.npz'
         np.savez_compressed(output_filename, **outputs)
         print("MAE : {}".format(mean_score))
         print('Predictions saved as {}.'.format(output_filename))
