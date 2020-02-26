@@ -31,9 +31,9 @@ sensor_ids, sensor_id_to_ind, adj_mx = load_graph_data(graph_pkl_filename)
 
 G = nx.from_numpy_matrix(adj_mx, parallel_edges=False, create_using=nx.DiGraph)
 
-(edgecuts, parts) = metis.part_graph(G, 15)
+(edgecuts, parts) = metis.part_graph(G, 1)
 
-colors = ['red','blue','green']
+colors = ['red']
 for i, p in enumerate(parts):
 	G.node[i]['color'] = colors[p]
 
