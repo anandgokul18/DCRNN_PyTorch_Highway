@@ -1,31 +1,10 @@
-"""
-import yaml
 import networkx as nx
 import metis
-import numpy as np
+#import pydot
 
 from lib.utils import load_graph_data
 
-graph_pkl_filename="data/sensor_graph_arterial/adj_mx_arterial.pkl"
-
-sensor_ids, sensor_id_to_ind, adj_mx = load_graph_data(graph_pkl_filename)
-
-G = nx.from_numpy_matrix(adj_mx, parallel_edges=False, create_using=nx.DiGraph)
-
-import matplotlib.pyplot as plt
-
-nx.draw(G)  # networkx draw()
-
-plt.draw()  # pyplot draw()
-"""
-
-import networkx as nx
-import metis
-import pydot
-
-from lib.utils import load_graph_data
-
-from networkx.drawing.nx_agraph import write_dot
+#from networkx.drawing.nx_agraph import write_dot
 
 graph_pkl_filename="data/sensor_graph_arterial/adj_mx_arterial.pkl"
 
@@ -39,6 +18,41 @@ print("loaded graph...")
 
 print("partioned graph...")
 
+listofedges = list(G.edges)
+
+#Colors for each of the 15 partitions
+colors = ['red','yellow', 'blue', 'black', 'green', 'brown', 'purple', 'gray', 'orange', 'pink', 'cyan', 'maroon', 'coral', 'teal', 'crimson']
+
+###Writing list of edges to a txt file
+# f = open( 'listofedges.txt', 'w' )
+#f.write( str(listofedges))
+#f.close()
+
+###Writing list of edges to a CSV file
+#import csv
+#with open('listofedges.csv', 'w') as f:
+#	writer = csv.writer(f , lineterminator='\n')
+#	for tup in listofedges:
+#		writer.writerow(tup)
+
+###Writing list of edges to a CSV file so that it can be formatted into DOT using editors
+import csv
+with open('listofedges.csv', 'w') as f:
+	writer = csv.writer(f , lineterminator='\n')
+	writer.writerow('digraph arterial {')
+
+	#Adding color coding
+	for i in range(len(parts)):
+		writer.writerow(str(i)+' [color='+colors[parts[i]]+'];')
+
+	#Adding actual data. Replace the commas with ' -> '
+	for tup in listofedges:
+		writer.writerow(tup+(';',))
+	writer.writerow('}')
+
+#The end
+
+'''
 colors = ['red','yellow', 'blue', 'black', 'green', 'brown', 'purple', 'gray', 'orange', 'pink', 'cyan', 'maroon', 'coral', 'teal', 'crimson']
 for i, p in enumerate(parts):
 	try:
@@ -51,3 +65,4 @@ for i, p in enumerate(parts):
 print("color coded graph...")
 
 write_dot(G, 'graph.dot')
+'''
