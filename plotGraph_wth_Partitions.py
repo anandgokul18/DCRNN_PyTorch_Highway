@@ -39,11 +39,12 @@ colors = ['red','yellow', 'blue', 'black', 'green', 'brown', 'purple', 'gray', '
 import csv
 with open('listofedges.csv', 'w') as f:
 	writer = csv.writer(f , lineterminator='\n')
-	writer.writerow('digraph arterial {')
+	writer.writerow(['digraph model {'])
 
 	#Adding color coding
 	for i in range(len(parts)):
-		writer.writerow(str(i)+' [color='+colors[parts[i]]+'];')
+		var = str(i)+' [color='+colors[parts[i]]+'];'
+		writer.writerow([var])
 
 	#Adding actual data. Replace the commas with ' -> '
 	for tup in listofedges:
