@@ -150,9 +150,12 @@ def generate_partitioned_data(args):
         summ+=len(listofheaders[i])
     assert(summ==len(originalcolumnheaders))
 
-    import pdb;pdb.set_trace()
-    assert(listofheaders[0][0]=='12160-E')
-    assert(listofheaders[14][530]=='8398-N')
+    #import pdb;pdb.set_trace()
+    #assert(listofheaders[0][0]=='12160-E')
+    #assert(listofheaders[14][530]=='8398-N')
+    print("Saving original Sensor-IDs of each partition to separate file")
+    for i in range(0,args.number_of_partitions):
+        np.save(args.predictions_dir+"/originalSensorIDListofPartition"+str(i)+".npy",listofheaders[i])
 
 
     df.columns = numberofsensors
