@@ -135,9 +135,24 @@ def generate_partitioned_data(args):
     originalcolumnheaders = list(df.columns.values)
 
 
-    '''Original headers for each partition
     '''
+    Original headers for each partition
+    '''
+    listofheaders=[]
+    for i in range(0,args.number_of_partitions):
+        listofheaders.append([])
+        for j in listofpartitions[i]:
+            listofheaders[i].append(originalcolumnheaders[j])
+
+    #Debugging statements below
+    summ=0
+    for i in range(0,args.number_of_partitions):
+        summ+=len(listofheaders[i])
+    assert(summ==len(originalcolumnheaders))
+
     import pdb;pdb.set_trace()
+    assert(listofheaders[0][0]=='12160-E')
+    assert(listofheaders[14][530]=='8398-N')
 
 
     df.columns = numberofsensors
