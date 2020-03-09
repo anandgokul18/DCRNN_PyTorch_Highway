@@ -129,12 +129,13 @@ def generate_partitioned_data(args):
 
     #Dropping the extra sensors
     #Not needed again
+    '''
     import numpy
     oldsensors = numpy.load('data/results/originalSensorIDs.npy')
     for header in list(df.columns.values):
         if header not in oldsensors:
             del df[header]
-
+    '''
 
     #Renaming the df's column names
     numberofsensors=[]
@@ -157,7 +158,6 @@ def generate_partitioned_data(args):
     summ=0
     for i in range(0,args.number_of_partitions):
         summ+=len(listofheaders[i])
-    import pdb; pdb.set_trace()
     assert(summ==len(originalcolumnheaders))
 
     #import pdb;pdb.set_trace()
