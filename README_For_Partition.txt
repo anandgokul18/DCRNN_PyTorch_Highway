@@ -1,7 +1,8 @@
 README
 ------
 
-If using Split graphs, please follow the below instructions:
+If using Split graphs, please follow the below instructions to train the model:
+===============================================================================
 
 ((PREREQ 0)). Create a directory 'data/results/' or any other location which should be used as 'predictions_dir'
 
@@ -22,3 +23,21 @@ data/results/highway_predictions<0/1/2>.npz
 
 
 4. TO-DO: Combine all three predictions file back into their original order
+
+Graph:
+======
+
+1. python plotGraph_wth_Partitions.py
+2. Then, scp the file 'listofedges.csv' to Desktop and edit with text editor.
+3. rm -rf listofedges.csv
+4. Find and Replace: 
+		1. ';,' with ';'
+		2. ',' with ' -> '
+5. scp the listofedges back to the server to data/results directory
+
+To predict on new test datatset:
+=================================
+
+1. Split the test dataset into partitions, but ONLY for test part .ie. don't split it 3 ways to train,test and val
+
+2. For each partition, load the last saved epoch model. Then, run the eval method and get the final predictions for that.

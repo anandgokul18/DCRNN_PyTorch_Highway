@@ -21,7 +21,7 @@ print("partioned graph...")
 listofedges = list(G.edges)
 
 #Colors for each of the 15 partitions
-colors = ['red','yellow', 'blue', 'black', 'green', 'brown', 'purple', 'gray', 'orange', 'pink', 'cyan', 'maroon', 'coral', 'teal', 'crimson']
+colors = ['red','yellow', 'blue', 'black', 'green', 'brown', 'purple', 'gray', 'orange', 'pink', 'cyan', 'navyblue', 'coral', 'darkolivegreen', 'crimson']
 
 ###Writing list of edges to a txt file
 # f = open( 'listofedges.txt', 'w' )
