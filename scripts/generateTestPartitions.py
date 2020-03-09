@@ -131,8 +131,8 @@ def generate_partitioned_data(args):
     #Not needed again
     import numpy
     oldsensors = numpy.load('data/results/originalSensorIDs.npy')
-    for header in oldsensors:
-        if header not in df.columns.values:
+    for header in list(df.columns.values):
+        if header not in oldsensors:
             del df[header]
 
 
