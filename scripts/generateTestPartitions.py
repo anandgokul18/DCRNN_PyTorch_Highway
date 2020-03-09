@@ -127,6 +127,15 @@ def generate_partitioned_data(args):
 
     df = pd.read_hdf(args.traffic_df_filename)
 
+    #Dropping the extra sensors
+    #Not needed again
+    import numpy
+    oldsensors = numpy.load('data/results/originalSensorIDs.npy')
+    for header in oldsensors:
+        if header not in df.columns.values:
+            del df[header]
+
+
     #Renaming the df's column names
     numberofsensors=[]
     for i in range(df.shape[1]):
