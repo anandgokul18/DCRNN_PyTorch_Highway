@@ -148,6 +148,7 @@ def generate_partitioned_data(args):
     summ=0
     for i in range(0,args.number_of_partitions):
         summ+=len(listofheaders[i])
+    import pdb; pdb.set_trace()
     assert(summ==len(originalcolumnheaders))
 
     #import pdb;pdb.set_trace()
