@@ -5,7 +5,7 @@ predictions_dir: data/FlaskTestResults
 data:
   batch_size: 16
   dataset_dir: data/Highway
-  test_batch_size: 16
+  test_batch_size: 64
   val_batch_size: 16
   graph_pkl_filename: data/sensor_graph_highway/dcrnn_highway_adj_mx.pkl
   split_into_subgraphs: false

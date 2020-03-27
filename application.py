@@ -1,6 +1,24 @@
 #!flask/bin/python
-from flask import Flask, jsonify, request
 
+#DCRNN Imports
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+import argparse
+import yaml
+import numpy as np
+import os
+
+from lib.utils import load_graph_data
+from model.pytorch.metis_graph_partitioning import partition_into_n_subgraphs
+
+#For setting the current cuda device
+import torch
+import lib.currentCuda as currentCuda
+
+#Flask Imports
+from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 
 application = Flask(__name__)
@@ -23,21 +41,6 @@ INPUT FORMAT: n sensors x 12 x 2
 ]
 OUTPUT FORMAT: n sensors x 12 x 1
 '''
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-import argparse
-import yaml
-import numpy as np
-
-from lib.utils import load_graph_data
-from model.pytorch.metis_graph_partitioning import partition_into_n_subgraphs
-
-#For setting the current cuda device
-import torch
-import lib.currentCuda as currentCuda
-
 @application.route('/predict', methods=['POST'])
 @cross_origin()
 def predict(config_filename='data/model/dcrnn_highway_flask.yaml', current_cuda_id=0, use_cpu_only=False, subgraph_id=0):
@@ -65,7 +68,8 @@ def predict(config_filename='data/model/dcrnn_highway_flask.yaml', current_cuda_
             #Choosing the correct number of nodes for current subgraph
             listofnodesizes = (supervisor_config['model'].get('num_nodes')).split(',')
             supervisor_config['model']['num_nodes'] = int(listofnodesizes[int(subgraph_id)])
-
+        else:
+            subgraph_id = str(subgraph_id)
 
         currentCuda.init()
         currentCuda.dcrnn_cudadevice = torch.device("cuda:"+str(current_cuda_id) if torch.cuda.is_available() else "cpu")
@@ -79,8 +83,13 @@ def predict(config_filename='data/model/dcrnn_highway_flask.yaml', current_cuda_
         #Loading the previously trained model
         supervisor.load_model(subgraph_id=subgraph_id)
 
-        #Saving the JSON test information to npz in test dir
-        np.savez_compressed(supervisor_config['data'].get('dataset_dir')+subgraph_id+'/'+'test.npz', x=sensor_data['x'], y=sensor_data['y'])
+        #Saving the JSON test information to npz in test dir. Bypassing the requirement for needing actual train and val dataset
+        if not split_into_subgraphs:
+            if not os.path.exists(supervisor_config['data'].get('dataset_dir')):
+                os.makedirs(supervisor_config['data'].get('dataset_dir'))
+            np.savez_compressed(supervisor_config['data'].get('dataset_dir')+'/'+'test.npz', x=sensor_data['x'], y=sensor_data['y'])
+            np.savez_compressed(supervisor_config['data'].get('dataset_dir')+'/'+'train.npz', x=None, y=None)
+            np.savez_compressed(supervisor_config['data'].get('dataset_dir')+'/'+'val.npz', x=None, y=None)
 
 
         #Evaluating the model finally and storing the results
@@ -89,7 +98,7 @@ def predict(config_filename='data/model/dcrnn_highway_flask.yaml', current_cuda_
         np.savez_compressed(output_filename, **outputs)
         print("MAE : {}".format(mean_score))
         print('Predictions saved as {}.'.format(output_filename))
-        return "completed"
+        return jsonify({"result": output.tolist()})
 
 if __name__ == '__main__':
     application.run(debug=True)
