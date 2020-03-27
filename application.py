@@ -74,6 +74,14 @@ def predict(config_filename='data/model/dcrnn_highway_flask.yaml', current_cuda_
         currentCuda.init()
         currentCuda.dcrnn_cudadevice = torch.device("cuda:"+str(current_cuda_id) if torch.cuda.is_available() else "cpu")
 
+        #Saving the JSON test information to npz in test dir. Bypassing the requirement for needing actual train and val dataset
+        if not split_into_subgraphs:
+            if not os.path.exists(supervisor_config['data'].get('dataset_dir')):
+                os.makedirs(supervisor_config['data'].get('dataset_dir'))
+            np.savez_compressed(supervisor_config['data'].get('dataset_dir')+'/'+'test.npz', x=sensor_data['x'], y=sensor_data['y'])
+            np.savez_compressed(supervisor_config['data'].get('dataset_dir')+'/'+'train.npz', x=None, y=None)
+            np.savez_compressed(supervisor_config['data'].get('dataset_dir')+'/'+'val.npz', x=None, y=None)
+
         #Moving import here since the global variable for cuda device is declared above
         import model.pytorch.dcrnn_supervisor as dcrnn_supervisor
 
@@ -82,14 +90,6 @@ def predict(config_filename='data/model/dcrnn_highway_flask.yaml', current_cuda_
         #supervisor.train(subgraph_identifier=subgraph_id)
         #Loading the previously trained model
         supervisor.load_model(subgraph_id=subgraph_id)
-
-        #Saving the JSON test information to npz in test dir. Bypassing the requirement for needing actual train and val dataset
-        if not split_into_subgraphs:
-            if not os.path.exists(supervisor_config['data'].get('dataset_dir')):
-                os.makedirs(supervisor_config['data'].get('dataset_dir'))
-            np.savez_compressed(supervisor_config['data'].get('dataset_dir')+'/'+'test.npz', x=sensor_data['x'], y=sensor_data['y'])
-            np.savez_compressed(supervisor_config['data'].get('dataset_dir')+'/'+'train.npz', x=None, y=None)
-            np.savez_compressed(supervisor_config['data'].get('dataset_dir')+'/'+'val.npz', x=None, y=None)
 
 
         #Evaluating the model finally and storing the results
