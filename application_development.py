@@ -61,8 +61,8 @@ def predict(config_filename='data/model/dcrnn_highway_flask.yaml', current_cuda_
             if not os.path.exists(supervisor_config['data'].get('dataset_dir')):
                 os.makedirs(supervisor_config['data'].get('dataset_dir'))
             #np.savez_compressed(supervisor_config['data'].get('dataset_dir')+'/'+'test.npz', x=sensor_data['x'], y=sensor_data['y'])
-            np.savez_compressed(supervisor_config['data'].get('dataset_dir')+'/'+'train.npz', x=None, y=None)
-            np.savez_compressed(supervisor_config['data'].get('dataset_dir')+'/'+'val.npz', x=None, y=None)
+            np.savez_compressed(supervisor_config['data'].get('dataset_dir')+'/'+'train.npz', x=np.array([]), y=np.array([]), x_offset=None, y_offset=None)
+            np.savez_compressed(supervisor_config['data'].get('dataset_dir')+'/'+'val.npz', x=np.array([]), y=np.array([]), x_offset=None, y_offset=None)
 
         #Moving import here since the global variable for cuda device is declared above
         import model.pytorch.dcrnn_supervisor as dcrnn_supervisor
