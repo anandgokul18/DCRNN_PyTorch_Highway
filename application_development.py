@@ -81,7 +81,10 @@ def predict(config_filename='data/model/dcrnn_highway_flask.yaml', current_cuda_
         np.savez_compressed(output_filename, **outputs)
         print("MAE : {}".format(mean_score))
         print('Predictions saved as {}.'.format(output_filename))
+        
+        predictions = outputs['prediction']
         import pdb; pdb.set_trace()
+        
         return "completed"
 
 

@@ -99,7 +99,9 @@ def predict(config_filename='data/model/dcrnn_highway_flask.yaml', current_cuda_
         np.savez_compressed(output_filename, **outputs)
         print("MAE : {}".format(mean_score))
         print('Predictions saved as {}.'.format(output_filename))
-        return jsonify({"result": output.tolist()})
+
+        predictions = outputs['prediction']
+        return jsonify({"prediction": predictions})
 
 if __name__ == '__main__':
     application.run(debug=True)
