@@ -15,6 +15,7 @@ from flask_cors import CORS, cross_origin
 import argparse
 import yaml
 import numpy as np
+import os
 
 from lib.utils import load_graph_data
 from model.pytorch.metis_graph_partitioning import partition_into_n_subgraphs
