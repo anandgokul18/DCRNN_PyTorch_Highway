@@ -218,7 +218,7 @@ tables==3.6.1
 tblib==1.6.0
 tensorboard==2.1.0
 tensorboardX==2.0+a7f3124
-tensorflow==2.1.0
+tensorflow==2.5.1
 tensorflow-estimator==2.1.0
 termcolor==1.1.0
 terminado==0.8.3
