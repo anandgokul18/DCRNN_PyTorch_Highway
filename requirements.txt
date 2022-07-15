@@ -39,7 +39,7 @@ dask==2.10.1
 decorator==4.4.1
 defusedxml==0.6.0
 descartes==1.1.0
-distributed==2.10.0
+distributed==2021.10.0
 docutils==0.16
 entrypoints==0.3
 et-xmlfile==1.0.1
